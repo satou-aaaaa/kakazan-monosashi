@@ -82,7 +82,7 @@
   // 何年前の言い方（物差しの説明に使う）
   const agoStr = (a) => (a >= 1e4 ? (a >= 1e6 ? `約${Math.round(a / 1e4)}万年前` : `約${(a / 1e4).toFixed(1).replace(/\.0$/, "")}万年前`) : a >= 1000 ? `約${a.toLocaleString("en-US")}年前` : `約${a}年前`);
   const roughAgo = (a) => (a <= 10 ? "ここ数年" : a > 1e4 ? agoStr(a) : agoStr(a >= 1000 ? Math.round(a / 100) * 100 : Math.round(a / 10) * 10));
-  const gwhyOf = (v) => `${v.name}の${v.label === NEW || v.label === REC ? "噴火" : "火山の活動"}（${v.when}）は、${v.age > 1e4 ? "1万年より前。物差しの外です。" : `いまから${roughAgo(v.age)}。物差しの「${GROUPS[grpOf(v.age)].name}」です。`}`;
+  const gwhyOf = (v) => `${v.name}の${v.label === NEW || v.label === REC ? "噴火" : "火山の活動"}（${v.when}）は、${v.age > 1e4 ? "1万年より前。物差しの外です。" : `${v.when.includes("年前") ? "" : `いまから${roughAgo(v.age)}。`}物差しの「${GROUPS[grpOf(v.age)].name}」です。`}`;
 
   // part:ri:begin（shared-workflows の template/parts/data/ri.js の写し。ここでは直さない。node scripts/sync-template.mjs で写す）
   const ri = (R, a, b) => a + Math.floor(R() * (b - a + 1));

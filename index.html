@@ -2025,7 +2025,7 @@ function cal(ym) {
 const svgEsc = (t) => esc(t);
 function rulerSvg(L, items, opt = {}) {
   const x0 = 22, x1 = 300, W = x1 - x0, xOf = (age) => x1 - (age / L) * W, band = Math.max(1.5, (100 / L) * W);
-  const ticks = [0, 0.2, 0.4, 0.6, 0.8, 1].map((f) => { const age = Math.round(L * f), x = xOf(age); return `<line x1="${x}" y1="62" x2="${x}" y2="70" stroke="#1d2a3f" stroke-width="1.5"/><text x="${x}" y="84" font-size="12" text-anchor="${f === 1 ? "start" : f === 0 ? "end" : "middle"}" fill="#1d2a3f">${f === 0 ? "いま" : f === 1 ? (L >= 1e4 ? `${L / 1e4}万年前` : `${L}年前`) : age >= 1e4 ? `${age / 1e4}万` : age}</text>`; }).join("");
+  const ticks = [0, 0.2, 0.4, 0.6, 0.8, 1].map((f) => { const age = Math.round(L * f), x = xOf(age); return `<line x1="${x}" y1="62" x2="${x}" y2="70" stroke="#1d2a3f" stroke-width="1.5"/>${f === 0.8 ? "" : `<text x="${x}" y="84" font-size="12" text-anchor="${f === 1 ? "start" : f === 0 ? "end" : "middle"}" fill="#1d2a3f">${f === 0 ? "いま" : f === 1 ? (L >= 1e4 ? `${L / 1e4}万年前` : `${L}年前`) : age >= 1e4 ? `${age / 1e4}万` : age}</text>`}`; }).join("");
   const marks = items.map((it, j) => {
     const v = G.VB[it.id], out = v.age > L, x = out ? 8 : xOf(v.age), y = opt.dots ? 52 : 46 - (j % 3) * 14;
     if (opt.dots) return `<circle cx="${x}" cy="${y}" r="4" fill="${out ? "#fff" : it.me ? "#b23a24" : "#1f4f7a"}" stroke="#1d2a3f" stroke-width="1.2"/>`;
