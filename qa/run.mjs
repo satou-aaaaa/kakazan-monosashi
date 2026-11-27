@@ -19,7 +19,7 @@ const check = (name, ok, detail = "") => results.push({ name, ok: !!ok, detail: 
 const firstClose = async (q) => { if (await q.locator("#howto[open]").count()) await q.click("#howto-ok"); if (await q.evaluate(() => !!(window.Core && Core.coach && Core.coach.active()))) { await q.evaluate(() => { Core.coach.leave(); scrollTo(0, 0); }); await q.waitForTimeout(100); } }; // はじめての練習の吹き出しをやめてホームへ（sync-template の migrateFirstQa が足した）
 const G = createRequire(import.meta.url)(path.join(root, "data.js"));
 
-const PINS = "nijo:4:0,fuji:4:1,oshima:3:1,yufu:0:1,nantai:2:0,yonemaru:1:1,abu:0:1,kawaru:0:0.3.1;ontake:1:0,kyu:1:2.1,yotei:3:0,daisen:2:0,zou:1:3.0.2,numazawa:3:0,abu:1:0,fukue:1:0;unzen:1:1,ontake:4:1,shizuka:0:3.0.1,sanbe:1:1,numazawa:4:0,nantai:4:1,yonemaru:0:0,kawaru:1:0.3.1"; // 過去の日の問題の印（変わったら過去の日の問題が変わった印。種類・言い方・火山は足すだけでも変わる）
+const PINS = "nijo:4:0:1,fuji:4:1:1,oshima:3:1:1,yufu:0:1:1,nantai:2:0:0,yonemaru:1:1:1,abu:0:1:1,kawaru:0:0.3.1:2;ontake:1:0:0,kyu:1:2.1:0,yotei:3:0:0,daisen:2:0:1,zou:1:3.0.2:1,numazawa:3:0:0,abu:1:0:0,fukue:1:0:0;unzen:1:1:1,ontake:4:1:1,shizuka:0:3.0.1:0,sanbe:1:1:1,numazawa:4:0:0,nantai:4:1:1,yonemaru:0:0:0,kawaru:1:0.3.1:3"; // 過去の日の問題の印（変わったら過去の日の問題が変わった印。種類・言い方・火山は足すだけでも変わる）
 // ---- 1. 問題の作り方（ブラウザを使わない）----
 // 活火山の定義と火山ごとの年代（ゲームとは別に書いた表。data.js の答えがこれと合うかを見る）
 // 定義：気象庁「活火山とは」 https://www.jma.go.jp/jma/kishou/know/kazan/katsukazan_toha/katsukazan_toha.html 「概ね過去1万年以内に噴火した火山及び現在活発な噴気活動のある火山」・111
@@ -50,7 +50,7 @@ const SRCOK = /^https:\/\/(www\.jma\.go\.jp\/jma\/|www\.data\.jma\.go\.jp\/vois\
       } else if (/^c\d$/.test(k.id)) {
         const ages = P.volc.map((x) => AGE[x]), best = P.volc[ages.indexOf(Math.min(...ages))], s2 = ages.slice().sort((a, b) => a - b);
         if (P.ans !== P.opts[P.volc.indexOf(best)]) why.push("くらべの答えがちがう");
-        const [lo, hi] = [[5, Infinity], [2, 5], [1.3, 2]][k.lv]; if (!(s2[1] / s2[0] >= lo && s2[1] / s2[0] < hi && s2[2] / s2[1] >= 1.3)) why.push("くらべの年代の離れ方が難しさとちがう");
+        const [lo, hi] = [[5, Infinity], [2, 5], [1.3, 2]][k.lv]; if (!(s2[1] / s2[0] >= lo && s2[1] / s2[0] < hi && s2[2] / s2[1] >= lo && s2[2] / s2[1] < hi)) why.push("くらべの年代の離れ方（となりとの比の2つとも）が難しさとちがう");
         if (P.volc.includes("rishiri")) why.push("幅の広い利尻山がくらべに出た");
         if (P.grp) why.push("くらべに2段目がある");
       } else {
@@ -94,7 +94,7 @@ const SRCOK = /^https:\/\/(www\.jma\.go\.jp\/jma\/|www\.data\.jma\.go\.jp\/vois\
   check("2か月のうちに38種類が全部出る・前の日と同じ組の日が少ない", cover.size === 38 && sameAsPrev < 20, `${cover.size}種類・前の日と同じ ${sameAsPrev}日`);
   // 過去の日の問題が変わらない（data.js を直したときの見張り。値は 2026-11-27 に作ったもの）
   // 1問目だけでなく、いくつかの日の5問と上級3問の全部（種類と言い方・選び肢の印）を見る（種類や言い方を足すと、全部の日の問題が変わるため。shigaisen-yomi #1 の CodeRabbit）
-  const snap = ["2026-11-27", "2026-11-28", "2027-01-01"].map((d) => [...G.dailyTags(d), ...G.hardTags(d)].map((t) => { const P = G.make(t); return `${P.kind}:${P.v}`; }).join(",")).join(";");
+  const snap = ["2026-11-27", "2026-11-28", "2027-01-01"].map((d) => [...G.dailyTags(d), ...G.hardTags(d)].map((t) => { const P = G.make(t); return `${P.kind}:${P.v}:${P.opts.indexOf(P.ans)}`; }).join(",")).join(";"); // 選び肢の並び（答えの位置）も見る（PR #1 の CodeRabbit）
   check("過去の日（2026-11-27・11-28・2027-01-01）の5問と上級3問が作ったときのまま（種類・言い方を足す・並べ替える・消すと変わる）", snap === PINS, snap);
 }
 
@@ -176,7 +176,7 @@ try {
     check("ホームの題は縦長の画面でも縦に伸びない（820×1180・390×844・1280×800）", big.length === 0, big.join(" ")); await c.close(); }
     await r.evaluate(() => localStorage.clear()); await r.reload(); await r.waitForTimeout(200);
     check("はじめての練習が始まったその場で「見た」が残る", await r.evaluate(() => { return Object.keys(localStorage).some((k) => { try { return JSON.parse(localStorage.getItem(k)).tut === true; } catch { return false; } }); })); await firstClose(r);
-    await r.reload(); await r.waitForTimeout(200); check("遊び方を「わかった」で閉じてすぐ読み直しても出ない（その場で残す）", await r.locator("#howto[open]").count() === 0); await c.close(); }
+    await r.reload(); await r.waitForTimeout(200); check("遊び方を「わかった」で閉じてすぐ読み直しても出ない（その場で残す。はじめての吹き出しも出ない）", await r.locator("#howto[open]").count() === 0 && !(await r.evaluate(() => !!(window.Core && Core.coach && Core.coach.active())))); await c.close(); }
   await firstClose(p);
   check("文字の大きさ：はじめは「大きい」（19px）", await p.evaluate(() => getComputedStyle(document.documentElement).fontSize) === "19px");
   await p.click('.fsrow button[data-fs="3"]');

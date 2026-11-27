@@ -1784,8 +1784,8 @@ function play() {
     <div class="ad ${isAd ? MCLS[P.media] || "m0" : "act"}" id="card">
       <div class="bar"><span>🌋 ${esc(P.media)}</span><span>${P.media === G.MEDIA.kurabe ? "どれが新しい？" : P.media === G.MEDIA.hantei ? "見分ける" : "どれ？"}</span></div>
       ${P.svg ? `<div class="sky">${P.svg}</div>` : ""}
-      ${P.card ? `<p class="name">${esc(P.card.vname)}<small>${esc(P.card.yomi)}・${esc(P.card.pref)}</small></p>
-      <dl class="rec"><div><dt>${esc(P.card.label)}</dt><dd>${esc(P.card.when)}${P.card.more ? `<small>${esc(P.card.more)}</small>` : ""}</dd></div>${P.card.fumi ? `<div><dt>噴気</dt><dd>${esc(P.card.fumi)}</dd></div>` : ""}</dl>` : ""}
+      ${P.card ? `<p class="name" data-a11y-say>${esc(P.card.vname)}<small>${esc(P.card.yomi)}・${esc(P.card.pref)}</small></p>
+      <dl class="rec" data-a11y-say><div><dt>${esc(P.card.label)}</dt><dd>${esc(P.card.when)}${P.card.more ? `<small>${esc(P.card.more)}</small>` : ""}</dd></div>${P.card.fumi ? `<div><dt>噴気</dt><dd>${esc(P.card.fumi)}</dd></div>` : ""}</dl>` : ""}
       <p class="sit" data-a11y-say>${esc(P.q)}</p>
       ${isAd ? `<p class="q" id="ask" data-a11y-say>${esc(P.q)}</p>` : ""}
       ${cur.wrong.length || cur.step === 2 ? "" : `<div class="sure-row">${Depth.sureHtml()}</div>`}
