@@ -1,0 +1,23 @@
+{
+  "name": "活火山の物差し",
+  "short_name": "活火山の物差し",
+  "description": "噴火の年代から活火山かどうかを見分け、1万年の物差しにならべる1日5問",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3efe4",
+  "theme_color": "#f3efe4",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
